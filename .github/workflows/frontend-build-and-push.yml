@@ -44,9 +44,11 @@ jobs:
 
             sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.BACKEND_IMAGE_NAME }}:latest
 
-            sudo docker-compose up -d 
+            sudo docker compose stop frontend
+            sudo docker compose rm -f frontend
+
+            sudo docker compose up -d frontend
 
             sudo docker image prune -f
             sudo docker container prune -f
-            sudo docker ps
           EOF

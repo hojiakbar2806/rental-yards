@@ -40,14 +40,16 @@ jobs:
             echo "success"
 
             echo "${{ secrets.ENV_FILE }}" | tr ' ' '\n' > .env
-
             git pull origin main
 
             sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.BACKEND_IMAGE_NAME }}:latest
 
-            sudo docker-compose up -d
+            sudo docker compose stop backend
+            sudo docker compose rm -f backend
+
+            sudo docker compose up -d backend
 
             sudo docker image prune -f
             sudo docker container prune -f
-            sudo docker ps
+
           EOF
