@@ -3,7 +3,7 @@ name: Rental backend deploy
 on:
   push:
     branches:
-      - main
+      - backend
     paths-ignore:
       - "**/*.md"
 
