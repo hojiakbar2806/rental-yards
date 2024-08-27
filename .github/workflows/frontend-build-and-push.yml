@@ -25,7 +25,7 @@ jobs:
         run: |
           docker build \
             --cache-from ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.FRONTEND_IMAGE_NAME }}:latest \
-            --tag ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.FRONTEND_IMAGE_NAME }}:latest .
+            --tag ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.FRONTEND_IMAGE_NAME }}:latest ./frontend
 
       # Step 4: Push the Docker image to Docker Hub
       - name: Push Docker Image
@@ -35,34 +35,34 @@ jobs:
       - name: Verify Docker Image
         run: docker inspect ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.FRONTEND_IMAGE_NAME }}:latest --format '{{.Id}}'
 
-      # # Step 6: Deploy to AWS
-      # - name: Deploy to AWS
-      #   run: |
-      #     # Create and set permissions for SSH key
-      #     echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/ssh_key
-      #     chmod 600 ~/ssh_key
+      # Step 6: Deploy to AWS
+      - name: Deploy to AWS
+        run: |
+          # Create and set permissions for SSH key
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/ssh_key
+          chmod 600 ~/ssh_key
 
-      #     # SSH into the EC2 instance and execute deployment commands
-      #     ssh -o StrictHostKeyChecking=no -i "~/ssh_key" ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-      #       # Change directory to project folder
-      #       cd ~/fastapi-docker
+          # SSH into the EC2 instance and execute deployment commands
+          ssh -o StrictHostKeyChecking=no -i "~/ssh_key" ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            # Change directory to project folder
+            cd ~/rental_yards
 
-      #       # Update environment file
-      #       echo "${{ secrets.ENV_FILE }}" | tr ' ' '\n' > .env
+            # Update environment file
+            echo "${{ secrets.ENV_FILE }}" | tr ' ' '\n' > .env
 
-      #       # Pull the latest code
-      #       git pull origin main
+            # Pull the latest code
+            git pull origin main
 
-      #       # Pull the latest Docker image
-      #       sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.FRONTEND_IMAGE_NAME }}:latest
+            # Pull the latest Docker image
+            sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.FRONTEND_IMAGE_NAME }}:latest
 
-      #       # Restart the FastAPI service
-      #       sudo docker compose restart backend
+            # Restart the FastAPI service
+            sudo docker-compose up -d --no-deps --build frontend
 
-      #       # Clean up unused images and containers
-      #       sudo docker image prune -f
-      #       sudo docker container prune -f
+            # Clean up unused images and containers
+            sudo docker image prune -f
+            sudo docker container prune -f
 
-      #       # List running containers
-      #       sudo docker ps
-      #     EOF
+            # List running containers
+            sudo docker ps
+          EOF
