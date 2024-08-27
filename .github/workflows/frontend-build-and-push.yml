@@ -1,27 +1,68 @@
-name: Build and Push Frontend Docker Image
+name: Build and Deploy to AWS
 
 on:
   push:
     branches:
-      - frontend # Branch nomi
+      - main
+    paths-ignore:
+      - "**/*.md"
 
 jobs:
-  build-and-push-frontend:
-    name: Build and Push Frontend Docker Image
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      # Step 1: Checkout the code from the repository
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      # Step 2: Log in to Docker Hub
+      - name: Docker Hub Login
+        run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
 
-      - name: Build and Push Frontend Docker image
-        uses: docker/build-push-action@v3
-        with:
-          context: ./frontend
-          push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/rental_nextjs:latest
+      # Step 3: Build the Docker image with caching
+      - name: Build Docker Image
+        run: |
+          docker build \
+            --cache-from ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.FRONTEND_IMAGE_NAME }}:latest \
+            --tag ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.FRONTEND_IMAGE_NAME }}:latest .
+
+      # Step 4: Push the Docker image to Docker Hub
+      - name: Push Docker Image
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.FRONTEND_IMAGE_NAME }}:latest
+
+      # Step 5: Verify the Docker image
+      - name: Verify Docker Image
+        run: docker inspect ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.FRONTEND_IMAGE_NAME }}:latest --format '{{.Id}}'
+
+      # # Step 6: Deploy to AWS
+      # - name: Deploy to AWS
+      #   run: |
+      #     # Create and set permissions for SSH key
+      #     echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/ssh_key
+      #     chmod 600 ~/ssh_key
+
+      #     # SSH into the EC2 instance and execute deployment commands
+      #     ssh -o StrictHostKeyChecking=no -i "~/ssh_key" ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+      #       # Change directory to project folder
+      #       cd ~/fastapi-docker
+
+      #       # Update environment file
+      #       echo "${{ secrets.ENV_FILE }}" | tr ' ' '\n' > .env
+
+      #       # Pull the latest code
+      #       git pull origin main
+
+      #       # Pull the latest Docker image
+      #       sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.FRONTEND_IMAGE_NAME }}:latest
+
+      #       # Restart the FastAPI service
+      #       sudo docker compose restart backend
+
+      #       # Clean up unused images and containers
+      #       sudo docker image prune -f
+      #       sudo docker container prune -f
+
+      #       # List running containers
+      #       sudo docker ps
+      #     EOF
