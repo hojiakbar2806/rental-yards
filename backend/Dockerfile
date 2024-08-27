@@ -1,15 +1,19 @@
-FROM python:3.12-slim
+FROM python:3.12-slim AS base
 
 WORKDIR /app
 
-RUN pip install poetry
+ENV PYTHONUNBUFFERED=1
+ENV DEBUG = False
+ENV APP_ENV=production
+
+RUN pip install --no-cache-dir poetry
 
 COPY pyproject.toml poetry.lock* /app/
 
-RUN poetry install --no-root
+RUN poetry config virtualenvs.create false && poetry install --no-dev --no-interaction --no-ansi
 
-COPY . /app/
+COPY . .
+
 
 EXPOSE 8000
-
-CMD poetry run gunicorn main:app --workers=4 --worker-class=uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
+CMD ["gunicorn", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "main:app"]
