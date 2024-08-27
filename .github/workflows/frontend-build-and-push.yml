@@ -40,7 +40,7 @@ jobs:
 
             echo "${{ secrets.ENV_FILE }}" | tr ' ' '\n' > .env
 
-            git pull origin frontend
+            git pull origin main
 
             sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.BACKEND_IMAGE_NAME }}:latest
 
