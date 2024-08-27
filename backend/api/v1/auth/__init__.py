@@ -1,0 +1,1 @@
+from .endpoint import router as auth_router

@@ -10,6 +10,14 @@ python = "^3.12"
 gunicorn = "^23.0.0"
 fastapi = "^0.112.2"
 uvicorn = "^0.30.6"
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.32"}
+asyncpg = "^0.29.0"
+alembic = "^1.13.2"
+python-dotenv = "^1.0.1"
+pydantic-settings = "^2.4.0"
+bcrypt = "^4.2.0"
+aiosqlite = "^0.20.0"
+pyjwt = "^2.9.0"
 
 
 [build-system]
