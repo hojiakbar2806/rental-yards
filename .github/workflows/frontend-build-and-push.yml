@@ -3,7 +3,7 @@ name: Build and Push Frontend Docker Image
 on:
   push:
     branches:
-      - frontend
+      - frontend # Branch nomi
 
 jobs:
   build-and-push-frontend:
@@ -19,8 +19,12 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-      - name: Build Frontend Docker image
-        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/rental_nextjs:latest ./frontend
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-      - name: Push Frontend Docker image
-        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/rental_nextjs:latest
+      - name: Build and Push Frontend Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: ./frontend
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/rental_nextjs:latest
