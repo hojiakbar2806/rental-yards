@@ -1,0 +1,26 @@
+name: Build and Push Frontend Docker Image
+
+on:
+  push:
+    branches:
+      - frontend
+
+jobs:
+  build-and-push-frontend:
+    name: Build and Push Frontend Docker Image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+      - name: Build Frontend Docker image
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/frontend:latest ./frontend
+
+      - name: Push Frontend Docker image
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/frontend:latest
