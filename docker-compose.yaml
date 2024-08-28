@@ -14,8 +14,6 @@ services:
       - .env  
     expose:
       - "8000"
-    volumes:
-      - ./backend_docker:/app 
     networks:
       - app-network
 
@@ -26,8 +24,6 @@ services:
       - .env  
     expose:
       - "3000"
-    volumes:
-      - ./frontend_docker:/app 
     networks:
       - app-network
 
@@ -39,7 +35,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./postgres_docker:/var/lib/postgresql/data
+      - ./postgres_container:/var/lib/postgresql/data
     networks:
       - app-network
 
