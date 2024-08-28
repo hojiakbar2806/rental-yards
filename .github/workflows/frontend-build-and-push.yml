@@ -40,13 +40,15 @@ jobs:
 
             echo "${{ secrets.ENV_FILE }}" | tr ' ' '\n' > .env
 
-            git pull origin main
+            rm -rf frontend backend .github
+
+            git fetch origin main
+            git checkout origin/main -- docker-compose.yml nginx/
 
             sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.FRONTEND_IMAGE_NAME }}:latest
 
             sudo docker compose stop frontend
             sudo docker compose rm -f frontend
-
             sudo docker compose up -d frontend
 
             sudo docker image prune -f
