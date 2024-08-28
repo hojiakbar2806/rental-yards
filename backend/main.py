@@ -30,7 +30,7 @@ app.include_router(v1_router)
 
 @app.get("/")
 async def root():
-    return {"message": "Success"}
+    return {"message": "It works"}
 
 
 @app.get("/media/{path:path}")
