@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sess
 from database.base import Base
 
 # Engine va sessionni yaratish
-async_engine = create_async_engine(settings.db_url, echo=settings.debug)
+async_engine = create_async_engine(settings.url, echo=settings.debug)
 AsyncSessionLocal = async_sessionmaker(async_engine, expire_on_commit=False)
 
 
