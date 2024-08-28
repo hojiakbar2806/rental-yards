@@ -9,7 +9,7 @@ services:
     command: /bin/sh -c "alembic upgrade head && gunicorn -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8000 main:app"
     environment:
       - ENV=production
-      - DEBUG=false
+      - DEBUG=False
     env_file:
       - .env  
     expose:

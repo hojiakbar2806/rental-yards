@@ -11,7 +11,7 @@ CORE = Path(__file__).resolve().parent
 if APP_ENV == "production":
     ENV_FILE = "app" / ".env"
 else:
-    ENV_FILE = BASE_DIR / ".env"
+    ENV_FILE = PROJECT_DIR / ".env"
 
 print(ENV_FILE)
 print(APP_ENV)
@@ -34,9 +34,10 @@ class DBSettings(BaseSettings):
             return f"sqlite+aiosqlite:///{str(BASE_DIR/self.sql_db_url)}"
 
     class Config:
-        env_file = PROJECT_DIR / ".env"
+        env_file = ENV_FILE
         env_file_encoding = "utf-8"
         extra = "ignore"
+
 
 class REDISSettings(BaseSettings):
     redis_host: str
@@ -47,14 +48,10 @@ class REDISSettings(BaseSettings):
         return f"redis://{self.redis_host}:{self.redis_port}"
     
     class Config:
-        env_file = PROJECT_DIR / ".env"
+        env_file = ENV_FILE
         env_file_encoding = "utf-8"
         extra = "ignore"
 
-    class Config:
-        env_file = PROJECT_DIR / ".env"
-        env_file_encoding = "utf-8"
-        extra = "ignore"
 
 class JWTSettings(BaseSettings):
     algorithm: str = "RS256"
@@ -64,19 +61,19 @@ class JWTSettings(BaseSettings):
     refresh_token_expires_minutes: int = 60
 
     class Config:
-        env_file = PROJECT_DIR / ".env"
+        env_file = ENV_FILE
         env_file_encoding = "utf-8"
         extra = "ignore"
 
+
 class Settings(DBSettings):
-    debug: bool = True
+    debug: bool = False
 
     db: DBSettings = DBSettings()
-
     jwt: JWTSettings = JWTSettings()
 
     class Config:
-        env_file = PROJECT_DIR / ".env"
+        env_file = ENV_FILE
         env_file_encoding = "utf-8"
         extra = "ignore"
 
