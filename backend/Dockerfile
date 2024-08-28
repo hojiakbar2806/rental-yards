@@ -2,10 +2,6 @@ FROM python:3.12-slim AS base
 
 WORKDIR /app
 
-ENV PYTHONUNBUFFERED=1
-ENV DEBUG = False
-ENV APP_ENV=production
-
 RUN pip install --no-cache-dir poetry
 
 COPY pyproject.toml poetry.lock* /app/

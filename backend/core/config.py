@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-from pydantic import Field
 from pydantic_settings import BaseSettings
 
 APP_ENV = os.getenv("APP_ENV", "development")
@@ -9,7 +8,10 @@ PROJECT_DIR = Path(__file__).resolve().parent.parent.parent
 BASE_DIR = Path(__file__).resolve().parent.parent
 CORE = Path(__file__).resolve().parent
 
-ENV_FILE = APP_ENV=="production" and PROJECT_DIR / ".env" or BASE_DIR / ".env"
+if APP_ENV == "production":
+    ENV_FILE = "app" / ".env"
+else:
+    ENV_FILE = BASE_DIR / ".env"
 
 
 class DBSettings(BaseSettings):
@@ -64,8 +66,6 @@ class JWTSettings(BaseSettings):
         extra = "ignore"
 
 class Settings(DBSettings):
-    app_env: str = APP_ENV
-
     debug: bool = True
 
     db: DBSettings = DBSettings()
