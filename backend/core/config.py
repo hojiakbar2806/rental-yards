@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from pydantic_settings import BaseSettings
 
-APP_ENV = os.getenv("APP_ENV", "development")
+APP_ENV = os.getenv("ENV", "development")
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent.parent
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -12,6 +12,9 @@ if APP_ENV == "production":
     ENV_FILE = "app" / ".env"
 else:
     ENV_FILE = BASE_DIR / ".env"
+
+print(ENV_FILE)
+print(APP_ENV)
 
 
 class DBSettings(BaseSettings):

@@ -7,10 +7,13 @@ services:
     image: hojiakbar2806/rental_fastapi:latest
     container_name: backend
     command: /bin/sh -c "alembic upgrade head && gunicorn -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8000 main:app"
-    expose:
-      - "8000"
+    environment:
+      - ENV=production
+      - DEBUG=false
     env_file:
       - .env  
+    expose:
+      - "8000"
     networks:
       - app-network
 
