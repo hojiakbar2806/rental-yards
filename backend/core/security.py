@@ -61,10 +61,7 @@ def create_refresh_token(id: int, expires_delta: timedelta | None = None) -> str
     return encode_jwt(jwt_payload, "refresh", expires_delta)
 
 
-async def verify_user(
-        token: HTTPAuthorizationCredentials,
-        session: AsyncSession
-) -> User:
+async def verify_user(token: HTTPAuthorizationCredentials,session: AsyncSession) -> User:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Autentifikatsiya ma'lumotlari yaroqsiz",
