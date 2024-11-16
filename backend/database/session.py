@@ -1,15 +1,13 @@
-# database/session.py
 from core.config import settings
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 
 from database.base import Base
 
-# Engine va sessionni yaratish
 async_engine = create_async_engine(settings.url, echo=settings.debug)
 AsyncSessionLocal = async_sessionmaker(async_engine, expire_on_commit=False)
 
 
-async def get_async_session() -> AsyncSession:  # type: ignore
+async def get_async_session() -> AsyncSession: 
     async with AsyncSessionLocal() as session:
         yield session
 

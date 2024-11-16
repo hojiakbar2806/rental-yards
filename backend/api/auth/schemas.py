@@ -32,7 +32,7 @@ class Login(BaseModel):
 class Token(BaseModel):
     access_token: str
     refresh_token: str
-    type: str
+    type: str = "Bearer"
 
 
 class ResponseModel(BaseModel):

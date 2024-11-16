@@ -1,5 +1,5 @@
 from models.user import User
-from api.v1.auth import schemas
+from api.auth import schemas
 from utils import check_password
 from fastapi import HTTPException
 from sqlalchemy.future import select

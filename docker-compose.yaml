@@ -5,6 +5,9 @@ networks:
 services:
   backend:
     image: hojiakbar2806/rental_fastapi:latest
+    # build: 
+    #   context: ./backend
+    #   dockerfile: Dockerfile
     container_name: backend
     command: /bin/sh -c "alembic upgrade head && gunicorn -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8000 main:app"
     environment:
@@ -14,20 +17,19 @@ services:
       - .env  
     expose:
       - "8000"
-    volumes:
-      - ./backend_docker:/app 
     networks:
       - app-network
 
   frontend:
     image: hojiakbar2806/rental_nextjs:latest
+    # build:
+    #   context: ./frontend
+    #   dockerfile: Dockerfile
     container_name: frontend
     env_file:
       - .env  
     expose:
       - "3000"
-    volumes:
-      - ./frontend_docker:/app 
     networks:
       - app-network
 
@@ -37,9 +39,9 @@ services:
     env_file:
       - .env  
     ports:
-      - "5432:5432"
+      - "5432:5432"  
     volumes:
-      - ./postgres_docker:/var/lib/postgresql/data
+      - ./postgres_container:/var/lib/postgresql/data
     networks:
       - app-network
 
@@ -49,7 +51,7 @@ services:
     env_file:
       - .env  
     ports:
-      - "6379:6379"
+      - "6379:6379"  
     networks:
       - app-network
 
@@ -60,11 +62,9 @@ services:
       - frontend
       - backend
     ports:
-      - "80:80"
+      - "80:80" 
     volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - ./nginx/error-pages:/usr/share/nginx/html
-
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf  
+      - ./nginx/error-pages:/usr/share/nginx/html  
     networks:
       - app-network
-
